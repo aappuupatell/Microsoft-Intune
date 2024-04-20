@@ -44,6 +44,7 @@ To run the script manually:
 ```powershell
 .\Intune-Set-PrimaryUser.ps1
 ```
+
 For automated execution in an Azure Automation environment, set **$AzureAutomation** to **$True.**
 
 ## Author
@@ -65,4 +66,4 @@ This script is provided as-is without any warranty. Use it at your own risk. The
 
 ---
 
-Make sure to replace the Intune portal URL (https://endpoint.microsoft.com/) with the appropriate URL for your organization if it differs. Also, ensure that you have the necessary permissions and licenses to deploy and execute PowerShell scripts through Microsoft Intune.
+Make sure to replace the Intune portal URL <https://endpoint.microsoft.com/> with the appropriate URL for your organization if it differs. Also, ensure that you have the necessary permissions and licenses to deploy and execute PowerShell scripts through Microsoft Intune.
