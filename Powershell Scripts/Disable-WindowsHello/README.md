@@ -16,7 +16,7 @@ Windows Hello for Business is feature that provides an alternative method for us
 
 1. Download the `Disable-HelloForBusiness.ps1` script from this repository.
 
-2. Sign in to the Microsoft Intune portal (https://endpoint.microsoft.com/).
+2. Sign in to the Microsoft Intune portal (<https://endpoint.microsoft.com/>).
 
 3. Navigate to "Devices" > "Scripts" and click on "Add".
 
@@ -60,4 +60,4 @@ This script is provided as-is without any warranty. Use it at your own risk. The
 
 ---
 
-Make sure to replace the Intune portal URL (https://endpoint.microsoft.com/) with the appropriate URL for your organization if it differs. Also, ensure that you have the necessary permissions and licenses to deploy and execute PowerShell scripts through Microsoft Intune.
+Make sure to replace the Intune portal URL (<https://endpoint.microsoft.com/>) with the appropriate URL for your organization if it differs. Also, ensure that you have the necessary permissions and licenses to deploy and execute PowerShell scripts through Microsoft Intune.
