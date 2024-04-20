@@ -46,7 +46,23 @@ To run the script manually:
 ```
 For automated execution in an Azure Automation environment, set **$AzureAutomation** to **$True.**
 
+## Author
+
+- Name: @aappuupatell
+- Created: 04/19/2024
+
+## License
+
+This script is released under the [MIT License](LICENSE).
+
 ## Contributing
 
-Contributions to enhance the functionality or efficiency of this script are welcome. Please ensure to test any changes in your environment before submitting a pull request.
+If you find any issues or have suggestions for improvements, please open an issue or submit a pull request in this repository.
 
+## Disclaimer
+
+This script is provided as-is without any warranty. Use it at your own risk. The author is not responsible for any damage or loss caused by the usage of this script.
+
+---
+
+Make sure to replace the Intune portal URL (https://endpoint.microsoft.com/) with the appropriate URL for your organization if it differs. Also, ensure that you have the necessary permissions and licenses to deploy and execute PowerShell scripts through Microsoft Intune.
