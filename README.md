@@ -27,7 +27,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Disclaimer
 
-This repository is not officially affiliated with or endorsed by Microsoft. It is maintained by the community to aid those who manage Intune environments.
+This repository is not officially affiliated with or endorsed by Microsoft. It is maintained by the community to aid those who manage Intune environments. 
 
 ## Support
 
