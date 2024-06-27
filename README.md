@@ -33,5 +33,5 @@ This repository is not officially affiliated with or endorsed by Microsoft. It i
 
 If you need help or have questions about the content here, please open an issue in this repository.
 
-Thank you for visiting! We hope you find the resources here helpful in managing your Intune environment.
+Thank you for visiting! We hope you find the resources here helpful in managing your Intune environment. 
    
