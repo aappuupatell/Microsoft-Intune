@@ -1,37 +1,177 @@
-# Microsoft-Intune 
-PowerShell Scripts, Tools, and Modules for Microsoft Intune.
+# Microsoft Intune
 
-Welcome to the **Microsoft-Intune** repository! This repository is a comprehensive resource dedicated to providing useful scripts, remediations, tips, and tricks to help administrators and IT professionals manage their Intune environments more effectively.
-## Getting Started
+A structured, long-term knowledge base for Microsoft Intune.
 
-To get started with these resources, simply clone this repository to your local machine using the following command:
+This repository is built to document Intune end to end — from prerequisites and tenant setup to advanced automation, policy engineering, security, reporting, and platform operations.
 
-```bash
-https://github.com/aappuupatell/Microsoft-Intune.git
-```
-## How to Contribute
+## Purpose
 
-Contributions to this repository are welcome! If you have a script, tip, or solution that can help others with Intune management, please follow these steps to contribute:
+This repo is intended to become a practical reference for building, managing, securing, and scaling Intune in real environments.
 
-1. **Fork the repository** to your GitHub account.
-2. **Clone your forked repository** to your local machine.
-3. **Create a new branch** for your contribution.
-4. **Add your scripts, tips, or other content** to the new branch.
-5. **Commit your changes** with a clear message describing the contribution.
-6. **Push your changes** to your fork.
-7. **Open a pull request** from your fork back to the main repository.
+## What this repo covers
 
-## License
+The scope of this repository is broad by design. It is meant to cover the full Intune lifecycle, including:
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+### Fundamentals
+- Tenant readiness
+- Identity and access prerequisites
+- Licensing considerations
+- RBAC and scope design
+- Naming standards
+- Assignment strategy
+- Change control and rollout methodology
+
+### Enrollment and onboarding
+- Windows enrollment
+- Windows Autopilot
+- Apple enrollment
+- Android Enterprise enrollment
+- macOS enrollment
+- Linux enrollment
+- Enrollment restrictions
+- Device categories
+- Enrollment Status Page and onboarding flow design
+
+### Configuration management
+- Settings Catalog
+- Administrative Templates
+- Device restrictions
+- Custom profiles and OMA-URI
+- Configuration standards
+- Conflict awareness
+- Baseline design
+- Policy organization and cleanup strategy
+- Policy Sets
+- PowerShell Scripts and Remediations
+
+### Application management
+- Win32 app packaging and deployment
+- Microsoft 365 Apps
+- Store and line-of-business apps
+- App assignment strategy
+- Detection and requirement rules
+- Dependencies and supersedence
+- App configuration policies
+- Enterprise app lifecycle management
+
+### App protection
+- App Protection Policies
+- BYOD protection models
+- Managed vs unmanaged app controls
+- Data protection and access controls
+- Selective wipe and app-based protection strategy
+
+### Security and compliance
+- Endpoint security policies
+- Security baselines
+- Disk encryption
+- Firewall and antivirus
+- ASR and endpoint hardening
+- Compliance policies
+- Conditional Access integration
+- Secure access design patterns
+
+### Updates and servicing
+- Windows Autopatch
+- Update rings
+- Feature updates
+- Quality updates
+- Driver updates
+- Servicing rings
+- Rollout sequencing
+- User experience considerations
+- Patch governance
+
+### Automation and reporting
+- Microsoft Graph 
+- Scripted PowerShell Automations with Graph
+- Configuration export and comparison
+- Bulk administration workflows
+- Reporting exports
+- Compliance and inventory reporting
+- Operational dashboards and data pipelines
+
+### Operations
+- Drift correction
+- Remote actions
+- Device recovery procedures
+- Offboarding actions
+- Standard runbooks
+- Repeatable operational tasks
+
+### Advanced and optional capabilities
+- Remote support
+- Privilege management
+- Application catalog workflows
+- Certificate management
+- Advanced analytics
+- Tunnel and related mobility scenarios
+
+## Who this repo is for
+
+This repository is written for people who work with Intune in a serious way, including:
+
+- Intune administrators
+- Endpoint engineers
+- Cloud engineers
+- Security engineers
+- Platform architects
+- IT operations teams
+- Consultants and MSPs
+
+It should be useful whether you are building a new tenant, standardizing an existing one, cleaning up technical debt, or trying to make Intune more supportable at scale.
+
+## Repository principles
+
+A few standards shape how this repo is built:
+
+- **Documentation and artifacts stay together.** If a configuration matters, it should have both the artifact and the explanation behind it.
+- **Operational clarity matters.** Every major item should make clear what it does, where it applies, what it depends on, and how to back it out.
+- **Reusability matters.** Examples should be sanitized, portable, and easy to adapt.
+- **Consistency matters.** Structure, naming, and formatting should be predictable across the repo.
+- **Automation is preferred where it improves repeatability.** Especially for reporting, export, comparison, and large-scale administration.
+- **Production safety matters.** Nothing here should assume direct use in production without validation.
+
+
+
+## Contribution standard
+
+Contributions are welcome, but they should meet a clear standard.
+
+A good contribution should include:
+
+- A clear purpose
+- Clean formatting
+- Sanitized content
+- Environment assumptions
+- Assignment or usage notes where relevant
+- Validation guidance
+- Rollback or recovery guidance when applicable
+
+Do not commit:
+- Secrets
+- Tokens
+- Certificates
+- Tenant-specific identifiers
+- Hardware hashes
+- User data
+- Anything pulled directly from production without sanitization
+
+## Long-term goal
+
+The long-term goal is for this repository to become a complete, organized, and practical Microsoft Intune reference that can be used for:
+
+- Learning the platform properly
+- Standardizing enterprise deployments
+- Reusing proven configurations
+- Accelerating administration and support
+- Improving consistency across environments
+- Reducing dependence on undocumented portal knowledge
+
+In short: one place for Intune documentation, engineering patterns, artifacts, and operational execution.
 
 ## Disclaimer
 
-This repository is not officially affiliated with or endorsed by Microsoft. It is maintained by the community to aid those who manage Intune environments. 
+This is an independent repository and is not affiliated with Microsoft.
 
-## Support
-
-If you need help or have questions about the content here, please open an issue in this repository.
-
-
-Thank you for visiting! We hope you find the resources here helpful in managing your Intune environment.
+Everything in this repo should be reviewed, tested, and validated in your own environment before production use.
