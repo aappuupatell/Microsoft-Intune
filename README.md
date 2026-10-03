@@ -1,177 +1,166 @@
-# Microsoft Intune
+# Intune Atlas
 
-A structured, long-term knowledge base for Microsoft Intune.
+Documentation, exported configs, PowerShell automation, remediations, and operational context for Microsoft Intune — built from managing real environments, not just reading about them.
 
-This repository is built to document Intune end to end — from prerequisites and tenant setup to advanced automation, policy engineering, security, reporting, and platform operations.
+If you've ever inherited a tenant with 200 configuration profiles and no notes explaining why any of them exist, this repo is the thing you wished someone had left behind.
 
-## Purpose
+---
 
-This repo is intended to become a practical reference for building, managing, securing, and scaling Intune in real environments.
+## What this is
 
-## What this repo covers
+Intune is broad. Enrollment alone covers five platforms, each with its own enrollment types, restrictions, and gotchas. Stack configuration profiles, compliance policies, app deployments, security baselines, Conditional Access ties, update management, and the ever-growing Intune Suite on top of that — and suddenly one person's undocumented portal work becomes the whole team's problem.
 
-The scope of this repository is broad by design. It is meant to cover the full Intune lifecycle, including:
+Microsoft's docs are good reference material, but they're written to explain features in isolation. They won't tell you that a security baseline and a Settings Catalog profile are silently fighting over the same setting, or why your compliance policy shows "Not applicable" on devices you're sure it targets, or that the Intune Management Extension runs scripts in SYSTEM context but your detection rule assumed the user profile.
 
-### Fundamentals
-- Tenant readiness
-- Identity and access prerequisites
-- Licensing considerations
-- RBAC and scope design
-- Naming standards
-- Assignment strategy
-- Change control and rollout methodology
+This repo is the layer between official docs and real operations:
 
-### Enrollment and onboarding
-- Windows enrollment
-- Windows Autopilot
-- Apple enrollment
-- Android Enterprise enrollment
-- macOS enrollment
-- Linux enrollment
-- Enrollment restrictions
-- Device categories
-- Enrollment Status Page and onboarding flow design
+- **Documentation that explains intent** — not "this setting exists" but "here's why you'd configure it this way, what it conflicts with, and what to check when it doesn't apply."
+- **Exported policy artifacts** — compliance policies, configuration profiles, security baselines, update rings, and endpoint security policies as sanitized JSON ready for import. Your configs belong in version control, not just in a portal.
+- **PowerShell and Graph automation** — export/import workflows, drift detection, bulk operations, reporting. If you're doing it in the admin center more than twice, it should be scripted.
+- **Remediation scripts** — detection + fix pairs for common endpoint issues, documented with what they check, what they change, and what they leave alone.
+- **Operational runbooks and lessons learned** — device wipe procedures, break-glass scenarios, and the "this is what went wrong and how to avoid it" notes that are usually the most valuable part of any knowledge base.
 
-### Configuration management
-- Settings Catalog
-- Administrative Templates
-- Device restrictions
-- Custom profiles and OMA-URI
-- Configuration standards
-- Conflict awareness
-- Baseline design
-- Policy organization and cleanup strategy
-- Policy Sets
-- PowerShell Scripts and Remediations
+---
 
-### Application management
-- Win32 app packaging and deployment
-- Microsoft 365 Apps
-- Store and line-of-business apps
-- App assignment strategy
-- Detection and requirement rules
-- Dependencies and supersedence
-- App configuration policies
-- Enterprise app lifecycle management
+## What's covered
 
-### App protection
-- App Protection Policies
-- BYOD protection models
-- Managed vs unmanaged app controls
-- Data protection and access controls
-- Selective wipe and app-based protection strategy
+### Enrollment & Autopilot
+Windows Autopilot (user-driven, self-deploying, pre-provisioning — and the Device Preparation experience that's replacing classic Autopilot), Apple Automated Device Enrollment and Configurator-based flows, Android Enterprise (fully managed, work profile, dedicated devices), macOS enrollment via Company Portal and automated enrollment, and Linux. Enrollment restrictions, device categories, device limits, assignment filters on enrollment profiles, and the Enrollment Status Page — including the timing issues that cause half the support tickets during a rollout.
 
-### Security and compliance
-- Endpoint security policies
-- Security baselines
-- Disk encryption
-- Firewall and antivirus
-- ASR and endpoint hardening
-- Compliance policies
-- Conditional Access integration
-- Secure access design patterns
+### Device Configuration
+Settings Catalog is where you should start — it's what Microsoft is investing in going forward. But you'll also hit Administrative Templates (ADMX-backed policies delivered through Intune), device restriction templates, and custom OMA-URI for CSP settings that haven't surfaced in the catalog yet. This section covers the decision tree for when to use which profile type, how conflicts resolve when multiple profiles target the same setting, scope tags for RBAC, and assignment filters — because getting assignment right matters more than getting the setting right.
 
-### Updates and servicing
-- Windows Autopatch
-- Update rings
-- Feature updates
-- Quality updates
-- Driver updates
-- Servicing rings
-- Rollout sequencing
-- User experience considerations
-- Patch governance
+### Applications
+Win32 app packaging (IntuneWin), detection rules that actually work across x64 and ARM, dependency chains, supersedence, required vs. available install behavior, the Enterprise App Catalog, Microsoft 365 Apps deployment, LOB apps, and Store apps (both the new Microsoft Store integration and legacy flows). App configuration policies for managed apps and managed devices. What the IME logs (`IntuneManagementExtension.log`) are actually telling you when an install fails. The ESP app install phase and why apps sometimes look stuck at 50%.
 
-### Automation and reporting
-- Microsoft Graph 
-- Scripted PowerShell Automations with Graph
-- Configuration export and comparison
-- Bulk administration workflows
-- Reporting exports
-- Compliance and inventory reporting
-- Operational dashboards and data pipelines
+### App Protection (MAM)
+App protection policies for iOS, Android, and Windows — data transfer restrictions, copy/paste controls, conditional launch settings, PIN requirements, selective wipe. Covers both MDM-enrolled and unenrolled/BYOD scenarios, because most environments run both. Includes app configuration for managed apps and how MAM-WE (without enrollment) and MAM on enrolled devices differ in practice.
 
-### Operations
-- Drift correction
-- Remote actions
-- Device recovery procedures
-- Offboarding actions
-- Standard runbooks
-- Repeatable operational tasks
+### Compliance & Conditional Access
+Compliance policies per platform, custom compliance with PowerShell scripts, the evaluation cycle and why compliance state isn't instant, grace periods, notification actions, and non-compliance actions like retire/wipe on continued non-compliance. How compliance state feeds into Entra ID Conditional Access — patterns for gating Microsoft 365 access, VPN, and LOB apps. What "Not compliant" vs. "Not evaluated" vs. "In grace period" actually mean for your users and when each state blocks access.
 
-### Advanced and optional capabilities
-- Remote support
-- Privilege management
-- Application catalog workflows
-- Certificate management
-- Advanced analytics
-- Tunnel and related mobility scenarios
+### Security
+Endpoint security policies — antivirus (Defender AV), firewall, disk encryption (BitLocker and FileVault), attack surface reduction, endpoint detection and response — and how these relate to (and sometimes conflict with) configuration profiles targeting the same settings. Security baselines as a starting posture and why you should treat them as a starting point to customize, not a finished product. Defender for Endpoint onboarding through Intune, the Security Management for Microsoft Defender for Endpoint (MDE-attach) scenario, and the compliance → Conditional Access → Defender signal chain.
 
-## Who this repo is for
+### Updates & Servicing
+Update rings (deferral windows, deadlines, user experience settings), feature update policies, quality update policies including expedited updates, and driver update management. How Intune's update policies map to what Windows Autopatch does under the hood. Practical strategy for deferral and deadline settings, why active hours matter more than you think, and how to push a critical patch without destroying the end-user experience. Notes on servicing mixed Windows 10/11 fleets and planning for Windows 10 EOS.
 
-This repository is written for people who work with Intune in a serious way, including:
+### Remediations
+Detection and remediation script pairs (what used to be called Proactive Remediations before the rebrand). Real-world examples: stale registry keys, broken services, certificate health checks, time sync issues, local admin group drift. Each script pair is documented with its detection logic, what the remediation changes, and what it explicitly does not touch. Covers the execution context (SYSTEM vs. user), output requirements for detection scripts, and scheduling.
 
-- Intune administrators
-- Endpoint engineers
-- Cloud engineers
-- Security engineers
-- Platform architects
-- IT operations teams
-- Consultants and MSPs
+### Reporting & Graph Automation
+Built-in Intune reports and their limitations, Graph API export patterns for compliance status, app install failures, device inventory, and anything the portal can't slice the way you need. Authentication patterns for Graph (app registrations, delegated vs. application permissions, certificate-based auth), the `Microsoft.Graph` PowerShell module and direct REST calls, and the reality that many Intune Graph endpoints still live on the beta API. Reusable functions for backup/export, configuration comparison, bulk assignment changes, and scheduled reporting.
 
-It should be useful whether you are building a new tenant, standardizing an existing one, cleaning up technical debt, or trying to make Intune more supportable at scale.
+### Remote Actions & Runbooks
+Wipe, retire, fresh start, Autopilot reset, remote lock, passcode reset, sync, collect diagnostics, and device rename — and the platform differences that matter. A "wipe" on iOS and a "wipe" on Windows are not the same operation with the same consequences. Runbooks for repeatable procedures: lost/stolen device response, device offboarding, BitLocker key rotation, certificate renewal, and break-glass access.
 
-## Repository principles
+### Migrations
+Co-management with Configuration Manager — workload sliders, staged transitions, and running two management authorities without creating policy conflicts. Migration from third-party MDM (moving devices without wiping them where possible, and planning for when you can't). Moving from Hybrid Azure AD Join to Entra Join (cloud-native), including the Group Policy to Intune translation work and user-impact planning.
 
-A few standards shape how this repo is built:
+### Intune Suite & Add-ons
+Remote Help, Endpoint Privilege Management (just-in-time elevation without giving out local admin), Enterprise Application Management (the curated app catalog), Cloud PKI (cloud-hosted certificate lifecycle management), Advanced Analytics, and Microsoft Tunnel (including Tunnel for MAM on unenrolled devices). Each documented with prerequisites, licensing context, and practical guidance on when it's worth enabling. With many of these capabilities rolling into M365 E3/E5 licensing throughout 2026, the licensing notes are kept current.
 
-- **Documentation and artifacts stay together.** If a configuration matters, it should have both the artifact and the explanation behind it.
-- **Operational clarity matters.** Every major item should make clear what it does, where it applies, what it depends on, and how to back it out.
-- **Reusability matters.** Examples should be sanitized, portable, and easy to adapt.
-- **Consistency matters.** Structure, naming, and formatting should be predictable across the repo.
-- **Automation is preferred where it improves repeatability.** Especially for reporting, export, comparison, and large-scale administration.
-- **Production safety matters.** Nothing here should assume direct use in production without validation.
+---
 
+## Repo structure
 
+```
+/
+├── docs/
+│   ├── fundamentals/                  # Licensing, prereqs, tenant setup, Entra ID relationship
+│   ├── platforms/                     # Windows / macOS / iOS-iPadOS / Android / Linux
+│   ├── security-and-compliance/       # Compliance, Conditional Access, baselines, endpoint security
+│   ├── apps/                          # Deployment, config, protection, ESP/DPP
+│   ├── updates/                       # Rings, feature/quality updates, drivers, Autopatch
+│   ├── reporting-and-analytics/       # Reports, Graph exports, operational dashboards
+│   ├── automation/                    # Graph + PowerShell, auth, reusable functions
+│   ├── troubleshooting/              # Logs, known issues, platform-specific gotchas
+│   └── migrations/                    # Co-management, third-party MDM, cloud-native transition
+│
+├── artifacts/
+│   ├── policies/
+│   │   ├── configuration/             # Settings Catalog, ADMX, OMA-URI
+│   │   ├── compliance/                # Compliance policy JSON (per platform)
+│   │   ├── endpoint-security/         # AV, firewall, disk encryption, ASR, EDR
+│   │   ├── security-baselines/        # Baseline exports + customization notes
+│   │   ├── updates/                   # Update rings, feature/quality/driver policies
+│   │   └── apps/                      # App config templates, assignment metadata
+│   └── reports/                       # Export templates, sample output (sanitized)
+│
+├── scripts/
+│   ├── powershell/                    # Modules, admin scripts, Graph tooling
+│   └── graph/                         # REST collections, request samples
+│
+├── remediations/
+│   ├── detection/                     # Detection scripts (read-only checks)
+│   └── remediation/                   # Fix scripts, paired with detection
+│
+├── runbooks/                          # Operational procedures
+├── examples/                          # End-to-end walkthroughs
+└── .github/                           # PR templates, issue templates, CI
+```
 
-## Contribution standard
+If it changes device or app behavior, it gets two things: an artifact and a doc. The artifact is the *what*. The doc is the *why*, who it targets, and how to undo it.
 
-Contributions are welcome, but they should meet a clear standard.
+---
 
-A good contribution should include:
+## How to use this
 
-- A clear purpose
-- Clean formatting
-- Sanitized content
-- Environment assumptions
-- Assignment or usage notes where relevant
-- Validation guidance
-- Rollback or recovery guidance when applicable
+Start with `/docs` for your scenario. Greenfield rollout → `fundamentals/`. Hardening an existing tenant → `security-and-compliance/`. Cleaning up configuration drift → `automation/` and `troubleshooting/`. Migrating off ConfigMgr or a third-party MDM → `migrations/`.
 
-Do not commit:
-- Secrets
-- Tokens
-- Certificates
-- Tenant-specific identifiers
-- Hardware hashes
-- User data
-- Anything pulled directly from production without sanitization
+Then pull matching artifacts and scripts. Everything is modular — grab what applies, adapt it, and deploy through your own change process.
 
-## Long-term goal
+A few principles this is built around:
 
-The long-term goal is for this repository to become a complete, organized, and practical Microsoft Intune reference that can be used for:
+- **The admin center is where you deploy, not where you document.** Portal-only knowledge leaves when people leave. Version-controlled configs and written rationale stick around.
+- **Ring everything.** Pilot → limited → broad. Have a rollback plan *before* you deploy.
+- **Automate what repeats.** Intune is Graph-native — if you're clicking through the same portal workflow regularly, script it.
+- **"Deployed" ≠ "applied."** A green checkmark in the portal doesn't mean the setting took effect. Check, validate, then trust.
 
-- Learning the platform properly
-- Standardizing enterprise deployments
-- Reusing proven configurations
-- Accelerating administration and support
-- Improving consistency across environments
-- Reducing dependence on undocumented portal knowledge
+---
 
-In short: one place for Intune documentation, engineering patterns, artifacts, and operational execution.
+## Contributing
+
+Contributions are welcome — especially the "here's what broke and why" stories that save someone else a weekend.
+
+A good contribution includes:
+
+- A markdown doc with the problem it solves, who it's for, and a rollback path.
+- A sanitized artifact (JSON, script, template) — no tenant IDs, tokens, hardware hashes, or PII. Use placeholders like `<YOUR-TENANT-ID>` and note what goes there.
+- Platform and licensing context (especially for Suite add-ons or features that require Plan 2 or E5).
+
+---
 
 ## Disclaimer
 
-This is an independent repository and is not affiliated with Microsoft.
+Not a Microsoft project. Community-built by people who manage Intune environments day to day.
 
-Everything in this repo should be reviewed, tested, and validated in your own environment before production use.
+Everything is provided as-is. Test in a non-production environment. Validate your targeting. Have a rollback plan.
+
+---
+
+## References
+
+When the repo and the official docs disagree, the official docs win:
+
+- [Microsoft Intune documentation](https://learn.microsoft.com/en-us/intune/)
+- [What is Intune](https://learn.microsoft.com/en-us/intune/intune-service/fundamentals/what-is-intune)
+- [Enrollment guidance](https://learn.microsoft.com/en-us/intune/intune-service/fundamentals/deployment-guide-enrollment)
+- [Settings Catalog](https://learn.microsoft.com/en-us/intune/intune-service/configuration/settings-catalog)
+- [Administrative Templates (ADMX)](https://learn.microsoft.com/en-us/intune/intune-service/configuration/administrative-templates-windows)
+- [Endpoint security & baselines](https://learn.microsoft.com/en-us/intune/intune-service/protect/endpoint-security-policy)
+- [Compliance + Conditional Access](https://learn.microsoft.com/en-us/intune/intune-service/protect/conditional-access)
+- [App protection & configuration](https://learn.microsoft.com/en-us/intune/intune-service/apps/app-protection-policy)
+- [Remediations](https://learn.microsoft.com/en-us/intune/intune-service/fundamentals/remediations)
+- [Graph API — Intune](https://learn.microsoft.com/en-us/graph/intune-concept-overview)
+- [Report exports via Graph](https://learn.microsoft.com/en-us/intune/intune-service/fundamentals/reports-export-graph-apis)
+- [Co-management](https://learn.microsoft.com/en-us/intune/configmgr/comanage/)
+- [Intune Suite & add-ons](https://learn.microsoft.com/en-us/intune/intune-service/fundamentals/intune-add-ons)
+- [Cloud PKI](https://learn.microsoft.com/en-us/intune/cloud-pki/)
+- [Enterprise App Management](https://learn.microsoft.com/en-us/intune/intune-service/apps/apps-enterprise-app-man)
+
+---
+
+## License
+
+Released under the [MIT License](LICENSE). See [SECURITY.md](SECURITY.md) for responsible disclosure.
