@@ -279,7 +279,7 @@ $rules = @(
         Name     = 'UnsanitizedExportMetadata'
         Pattern  = '"(?<key>id|createdDateTime|lastModifiedDateTime|modifiedDateTime|createdBy|lastModifiedBy|supportsScopeTags|settingCount|priorityMetaData|isAssigned)"\s*:\s*(?<v>"[^"]*"|\d+|true|false|null)'
         Scope    = '^artifacts/.*\.json$'
-        Message  = 'Raw Graph export metadata in an artifact. Run scripts/powershell/ConvertTo-SanitizedIntuneExport.ps1 before committing.'
+        Message  = 'Raw Graph export metadata in an artifact. Remove id, createdDateTime, lastModifiedDateTime and similar fields before committing (see SECURITY.md).'
         Validate = {
             param($m)
             $key = $m.Groups['key'].Value

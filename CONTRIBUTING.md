@@ -14,16 +14,18 @@ This page is the rulebook. The [README](README.md) explains what the repo is for
 
 The [README's repo structure](README.md#repo-structure) is the map, and every folder has its own `README.md` saying what belongs there. [`docs/README.md`](docs/README.md) maps each topic area in the main README to the folders, scripts, and remediations that serve it.
 
-| You are adding...                          | Put it in                                      | Template                                      |
-| ------------------------------------------ | ---------------------------------------------- | --------------------------------------------- |
-| Conceptual doc, how-to, decision guide     | `docs/<area>/`                                 | `templates/doc.md`                            |
-| Policy export (JSON) and its doc           | `artifacts/policies/<area>/`                   | `templates/artifact.md`                       |
-| Admin / Graph script                       | `scripts/powershell/`                          | `templates/script.ps1`                        |
-| REST request collection                    | `scripts/graph/`                               | existing `.http` files                        |
-| Remediation pair                           | `remediations/detection/` + `remediations/remediation/` + `remediations/docs/` | `templates/remediation/`  |
-| Operational procedure                      | `runbooks/`                                    | `templates/runbook.md`                        |
-| End-to-end walkthrough                     | `examples/<name>/`                             | `templates/example.md`                        |
-| Post-mortem / lesson learned               | `docs/lessons-learned/`                        | `templates/lesson-learned.md`                 |
+| You are adding...                          | Put it in                                                                      |
+| ------------------------------------------ | ------------------------------------------------------------------------------ |
+| Conceptual doc, how-to, decision guide     | `docs/<area>/`                                                                 |
+| Policy export (JSON) and its doc           | `artifacts/policies/<area>/`                                                   |
+| Admin / Graph script                       | `scripts/powershell/`                                                          |
+| REST request collection                    | `scripts/graph/`                                                               |
+| Remediation pair                           | `remediations/detection/` + `remediations/remediation/` + `remediations/docs/` |
+| Operational procedure                      | `runbooks/`                                                                    |
+| End-to-end walkthrough                     | `examples/<name>/`                                                             |
+| Post-mortem / lesson learned               | `docs/lessons-learned/`                                                        |
+
+Starting points for each content type will be collected in `templates/` as they are written.
 
 ## The two rules that matter most
 
@@ -44,7 +46,7 @@ For remediations, the doc is `remediations/docs/<Name>.md`, one per pair.
 
 Exports from the admin center and Graph contain tenant IDs, group object IDs, timestamps, and sometimes display names you do not want public. Before committing:
 
-1. Run `scripts/powershell/ConvertTo-SanitizedIntuneExport.ps1` on the file (or export with `Export-IntuneConfiguration.ps1`, which sanitizes on the way out).
+1. Remove export metadata that only means something in the source tenant: `id`, `createdDateTime`, `lastModifiedDateTime`, `version`, `supportsScopeTags`, and similar.
 2. Replace anything tenant-specific that survives with a placeholder from the table below.
 3. Run `./.github/scripts/Test-RepoSanitized.ps1 -Path .` locally. CI runs the same check and fails the PR on findings.
 
@@ -100,7 +102,7 @@ last_verified: 2026-10                              # YYYY-MM you last confirmed
 
 ### Remediation contract
 
-Every pair in `remediations/` follows the contract in [`remediations/README.md`](remediations/README.md). The short version:
+Every pair in `remediations/` follows this contract (the full version will live in [`remediations/README.md`](remediations/README.md)):
 
 - Detection exits `1` when the issue is found and `0` when it is not. Any other exit code, or empty output, is treated by Intune as "issue not found".
 - Output is one line, under 2,048 characters, written with `Write-Output`.

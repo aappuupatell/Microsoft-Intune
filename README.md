@@ -161,7 +161,7 @@ A good contribution includes:
 - A sanitized artifact (JSON, script, template) — no tenant IDs, tokens, hardware hashes, or PII. Use placeholders like `<YOUR-TENANT-ID>` and note what goes there.
 - Platform and licensing context (especially for Suite add-ons or features that require Plan 2 or E5).
 
-Conventions, naming, placeholders, and the local checks are in [CONTRIBUTING.md](CONTRIBUTING.md). CI runs PSScriptAnalyzer, Pester, JSON validation, markdownlint, and a sanitization guard that fails the build on tenant IDs, tokens, or hardware hashes. Start from the files in [`templates/`](templates/).
+Conventions, naming, placeholders, and the local checks are in [CONTRIBUTING.md](CONTRIBUTING.md). CI runs PSScriptAnalyzer, Pester, JSON validation, markdownlint, and a sanitization guard that fails the build on tenant IDs, tokens, or hardware hashes.
 
 ---
 
