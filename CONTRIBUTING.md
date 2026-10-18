@@ -25,8 +25,6 @@ The [README's repo structure](README.md#repo-structure) is the map, and every fo
 | End-to-end walkthrough                     | `examples/<name>/`                                                             |
 | Post-mortem / lesson learned               | `docs/lessons-learned/`                                                        |
 
-Starting points for each content type will be collected in `templates/` as they are written.
-
 ## The two rules that matter most
 
 ### 1. Artifact + doc
@@ -108,8 +106,6 @@ Every pair in `remediations/` follows this contract (the full version will live 
 - Output is one line, under 2,048 characters, written with `Write-Output`.
 - Remediation is idempotent, never reboots or prompts, re-runs the detection logic at the end, and exits non-zero if the issue persists.
 - The doc states what the pair checks, what it changes, **what it explicitly does not touch**, the run context (SYSTEM or user, 32- or 64-bit), the schedule, and the rollback.
-
-`tests/Remediations.Tests.ps1` checks the mechanical parts of this (pairing, doc headings, exit statements) in CI.
 
 ## Running the checks locally
 

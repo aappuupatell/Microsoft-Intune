@@ -122,8 +122,7 @@ Remote Help, Endpoint Privilege Management (just-in-time elevation without givin
 │
 ├── runbooks/                          # Operational procedures
 ├── examples/                          # End-to-end walkthroughs
-├── templates/                         # Starting points for docs, artifacts, scripts, remediations, runbooks
-├── tests/                             # Pester tests: tooling, remediation contract, structure checks
+├── tests/                             # Pester tests: tooling and structure checks
 ├── .github/                           # PR template, issue templates, CI, sanitization guard
 ├── CONTRIBUTING.md
 ├── SECURITY.md
