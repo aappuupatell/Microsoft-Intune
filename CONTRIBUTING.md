@@ -44,7 +44,7 @@ For remediations, the doc is `remediations/docs/<Name>.md`, one per pair.
 
 Exports from the admin center and Graph contain tenant IDs, group object IDs, timestamps, and sometimes display names you do not want public. Before committing:
 
-1. Remove export metadata that only means something in the source tenant: `id`, `createdDateTime`, `lastModifiedDateTime`, `version`, `supportsScopeTags`, and similar.
+1. Run `scripts/powershell/ConvertTo-SanitizedIntuneExport.ps1` on the file. It removes export metadata that only means something in the source tenant (`id`, `createdDateTime`, `lastModifiedDateTime`, `version`, and similar), replaces known identifiers with placeholders, and writes stable, sorted JSON.
 2. Replace anything tenant-specific that survives with a placeholder from the table below.
 3. Run `./.github/scripts/Test-RepoSanitized.ps1 -Path .` locally. CI runs the same check and fails the PR on findings.
 

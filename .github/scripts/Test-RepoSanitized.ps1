@@ -86,11 +86,14 @@ $textExtensions = @(
 )
 $textFileNames = @('LICENSE', 'CODEOWNERS', 'README', 'CONTRIBUTING', 'SECURITY')
 
+# Test files that deliberately build fake identifiers as fixtures are excluded; everything
+# else under tests/ is scanned like any other file.
 $defaultExcludes = @(
     '.git/',
     'node_modules/',
     '.github/scripts/Test-RepoSanitized.ps1',
-    'tests/Test-RepoSanitized.Tests.ps1'
+    'tests/Test-RepoSanitized.Tests.ps1',
+    'tests/ConvertTo-SanitizedIntuneExport.Tests.ps1'
 )
 $allExcludes = @($defaultExcludes + $Exclude | Where-Object { $_ })
 
@@ -279,7 +282,7 @@ $rules = @(
         Name     = 'UnsanitizedExportMetadata'
         Pattern  = '"(?<key>id|createdDateTime|lastModifiedDateTime|modifiedDateTime|createdBy|lastModifiedBy|supportsScopeTags|settingCount|priorityMetaData|isAssigned)"\s*:\s*(?<v>"[^"]*"|\d+|true|false|null)'
         Scope    = '^artifacts/.*\.json$'
-        Message  = 'Raw Graph export metadata in an artifact. Remove id, createdDateTime, lastModifiedDateTime and similar fields before committing (see SECURITY.md).'
+        Message  = 'Raw Graph export metadata in an artifact. Run scripts/powershell/ConvertTo-SanitizedIntuneExport.ps1 on the file before committing.'
         Validate = {
             param($m)
             $key = $m.Groups['key'].Value
