@@ -151,6 +151,6 @@ jobs:
 
       # Free for repositories owned by a personal account. If this repo ever moves
       # into an organization, gitleaks-action needs a GITLEAKS_LICENSE secret.
-      - uses: gitleaks/gitleaks-action@v2
+      - uses: gitleaks/gitleaks-action@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
