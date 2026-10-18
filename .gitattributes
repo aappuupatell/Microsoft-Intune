@@ -1,0 +1,36 @@
+# Normalize line endings in the repo; check out with LF unless overridden below.
+* text=auto eol=lf
+
+# PowerShell: CRLF on checkout. Windows PowerShell 5.1 (what the Intune Management
+# Extension uses) and Authenticode signing both behave best with CRLF files.
+*.ps1  text eol=crlf
+*.psm1 text eol=crlf
+*.psd1 text eol=crlf
+*.cmd  text eol=crlf
+*.bat  text eol=crlf
+*.reg  text eol=crlf
+
+# Everything else stays LF.
+*.md   text eol=lf
+*.json text eol=lf
+*.yml  text eol=lf
+*.yaml text eol=lf
+*.csv  text eol=lf
+*.xml  text eol=lf
+*.sh   text eol=lf
+
+# Binary content that must never be line-ending normalized.
+*.png       binary
+*.jpg       binary
+*.jpeg      binary
+*.gif       binary
+*.ico       binary
+*.pdf       binary
+*.intunewin binary
+*.msi       binary
+*.exe       binary
+*.zip       binary
+*.pfx       binary
+*.p12       binary
+*.cer       binary
+*.crt       binary

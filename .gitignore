@@ -1,0 +1,87 @@
+# ---------------------------------------------------------------------------
+# Intune Atlas .gitignore
+# The point of most of these rules is to keep tenant data and secrets out of
+# a public repo. Read SECURITY.md before committing anything exported from a
+# tenant.
+# ---------------------------------------------------------------------------
+
+# --- Raw tenant exports (unsanitized) ---------------------------------------
+# Export into one of these locations, run the sanitizer, then commit only the
+# sanitized copy under artifacts/.
+exports/
+export/
+raw/
+**/raw/
+*.raw.json
+*.unsanitized.json
+*.export.json
+*-export-*.json
+
+# --- Secrets, tokens, certificates ------------------------------------------
+*.pfx
+*.p12
+*.pem
+*.key
+*.crt
+*.cer
+*.snk
+.env
+.env.*
+*.secret
+*.token
+*.credential
+secrets.json
+appsettings.*.json
+config.local.*
+*.local.ps1
+*.local.psd1
+*.local.json
+
+# --- Device identifiers ------------------------------------------------------
+# Autopilot hardware hashes and serial numbers are device secrets. Never commit.
+*HWID*.csv
+*hwid*.csv
+*HardwareHash*.csv
+*hardware-hash*.csv
+AutopilotHWID*.csv
+Autopilot*.csv
+*serial*.csv
+
+# --- Packaging output --------------------------------------------------------
+*.intunewin
+IntuneWinAppUtil.exe
+*.msi
+*.msix
+*.msixbundle
+*.appx
+*.appxbundle
+*.exe
+*.dmg
+*.pkg
+*.apk
+*.ipa
+*.mobileconfig.signed
+
+# --- Test and lint output ----------------------------------------------------
+TestResults/
+testResults.xml
+*.TestResults.xml
+coverage.xml
+Pester-*.xml
+PSScriptAnalyzer-*.xml
+
+# --- OS and editor junk ------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# --- Local scratch -----------------------------------------------------------
+tmp/
+temp/
+scratch/

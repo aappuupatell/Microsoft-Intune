@@ -1,0 +1,26 @@
+# EditorConfig: https://editorconfig.org
+# Keeps whitespace and line endings consistent across contributors' editors.
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+
+# PowerShell: 4-space indent, CRLF (see .gitattributes for why).
+[*.{ps1,psm1,psd1}]
+end_of_line = crlf
+indent_size = 4
+
+# Markdown: trailing double-space is a hard line break, so leave it alone.
+[*.md]
+trim_trailing_whitespace = false
+
+[*.{json,jsonc,yml,yaml}]
+indent_size = 2
+
+[*.csv]
+insert_final_newline = false

@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security issue
+    url: https://github.com/aappuupatell/Microsoft-Intune/security/advisories/new
+    about: Found a leaked identifier, an exploitable script, or a policy that silently weakens security? Report it privately here, not as an issue. See SECURITY.md.
+  - name: Official Microsoft Intune documentation
+    url: https://learn.microsoft.com/intune/
+    about: Bugs in Intune itself belong with Microsoft, not this repo.

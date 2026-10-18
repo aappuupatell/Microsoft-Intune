@@ -1,0 +1,156 @@
+name: CI
+
+# Every job here is a guard rail for a public repo that ships scripts people run as
+# SYSTEM and policy exports people import into production tenants:
+#   - PSScriptAnalyzer: scripts parse on Windows PowerShell 5.1 and follow the repo rules
+#   - Pester: unit tests for the tooling scripts and repo-structure checks
+#   - JSON validity: every artifact under artifacts/ is importable
+#   - markdownlint: docs render the way they were written
+#   - Sanitization guard: no tenant IDs, group IDs, hardware hashes, tokens, or
+#     real UPNs sneak into the repo (see SECURITY.md)
+#   - gitleaks: generic secret scanning over the full history
+#
+# Each job tolerates an empty tree (no .ps1 files, no tests) so the workflow is green
+# on a fresh clone and only starts failing when someone adds something wrong.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  powershell-lint:
+    name: PSScriptAnalyzer
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install PSScriptAnalyzer
+        shell: pwsh
+        run: Install-Module PSScriptAnalyzer -Force -Scope CurrentUser
+
+      - name: Analyze PowerShell files
+        shell: pwsh
+        run: |
+          $files = Get-ChildItem -Path . -Recurse -File -Include *.ps1, *.psm1, *.psd1 |
+              Where-Object { $_.FullName -notmatch '[\\/](\.git|node_modules)[\\/]' }
+          if (-not $files) {
+              Write-Host 'No PowerShell files found. Nothing to analyze.'
+              exit 0
+          }
+          $results = Invoke-ScriptAnalyzer -Path . -Recurse -Settings ./PSScriptAnalyzerSettings.psd1
+          if ($results) {
+              $results |
+                  Format-Table RuleName, Severity, ScriptName, Line, Message -AutoSize -Wrap |
+                  Out-String -Width 220 |
+                  Write-Host
+              foreach ($r in $results) {
+                  $rel = [System.IO.Path]::GetRelativePath((Get-Location).Path, $r.ScriptPath)
+                  Write-Host "::error file=$rel,line=$($r.Line)::$($r.RuleName): $($r.Message)"
+              }
+              Write-Error "PSScriptAnalyzer reported $($results.Count) issue(s)."
+              exit 1
+          }
+          Write-Host "PSScriptAnalyzer: $($files.Count) file(s) clean."
+
+  pester:
+    name: Pester tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Pester 5
+        shell: pwsh
+        run: Install-Module Pester -MinimumVersion 5.5.0 -MaximumVersion 5.99.99 -Force -SkipPublisherCheck -Scope CurrentUser
+
+      - name: Run tests
+        shell: pwsh
+        run: |
+          if (-not (Test-Path ./tests)) {
+              Write-Host 'No tests/ directory. Nothing to run.'
+              exit 0
+          }
+          Import-Module Pester -MinimumVersion 5.5.0 -MaximumVersion 5.99.99
+          $config = New-PesterConfiguration
+          $config.Run.Path = './tests'
+          $config.Run.Exit = $true
+          $config.Output.Verbosity = 'Detailed'
+          $config.TestResult.Enabled = $true
+          $config.TestResult.OutputFormat = 'NUnitXml'
+          $config.TestResult.OutputPath = './testResults.xml'
+          Invoke-Pester -Configuration $config
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pester-results
+          path: testResults.xml
+          if-no-files-found: ignore
+
+  json-validity:
+    name: JSON validity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Parse every .json file
+        shell: bash
+        run: |
+          set -uo pipefail
+          status=0
+          count=0
+          while IFS= read -r -d '' f; do
+            count=$((count + 1))
+            if ! err=$(jq empty "$f" 2>&1); then
+              echo "::error file=${f#./}::Invalid JSON: ${err}"
+              status=1
+            fi
+          done < <(find . -type f -name '*.json' -not -path './.git/*' -not -path '*/node_modules/*' -print0)
+          echo "Checked ${count} JSON file(s)."
+          exit "${status}"
+
+  markdownlint:
+    name: markdownlint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Lint Markdown
+        run: npx --yes markdownlint-cli2@0.18.1 "**/*.md"
+
+  sanitization-guard:
+    name: Sanitization guard
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Scan for tenant identifiers, secrets, and encoding problems
+        shell: pwsh
+        run: ./.github/scripts/Test-RepoSanitized.ps1 -Path . -FailOnFindings
+
+  gitleaks:
+    name: Secret scan (gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Free for repositories owned by a personal account. If this repo ever moves
+      # into an organization, gitleaks-action needs a GITLEAKS_LICENSE secret.
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,63 @@
+name: Bug report
+description: A script, remediation, artifact, or doc in this repo is wrong or broken.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        If this is a security problem (leaked identifier, exploitable script, policy that weakens security without saying so), **do not file it here**. Use private vulnerability reporting as described in SECURITY.md.
+
+  - type: input
+    id: path
+    attributes:
+      label: File path
+      description: Repo-relative path of the thing that is wrong.
+      placeholder: remediations/windows/time-sync/Detect-TimeSync.ps1
+    validations:
+      required: true
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of file is it?
+      options:
+        - Script (scripts/)
+        - Remediation pair (remediations/)
+        - Policy artifact (artifacts/)
+        - Documentation (docs/, runbooks/, examples/)
+        - Repo tooling / CI
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened instead?
+      description: Include the exact error text, exit code, or portal status. Redact tenant IDs, device names, and UPNs.
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS version and build, enrollment type (Entra joined / hybrid / co-managed), execution context (SYSTEM / user, 32-bit / 64-bit host), PowerShell version, Graph module version.
+      placeholder: |
+        Windows 11 24H2 (26100.xxxx), Entra joined, remediation run as SYSTEM in 64-bit host
+        Microsoft.Graph.Authentication 2.x
+
+  - type: checkboxes
+    id: sanitized
+    attributes:
+      label: Sanitization
+      options:
+        - label: I have removed tenant IDs, group IDs, device names, serial numbers, UPNs, and tokens from everything above.
+          required: true

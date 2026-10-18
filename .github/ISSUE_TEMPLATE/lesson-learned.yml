@@ -1,0 +1,55 @@
+name: Lesson learned
+description: Something broke in a real environment and the write-up would save someone else a weekend.
+title: "[Lesson]: "
+labels: ["lesson-learned"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        These are the most valuable contributions in the repo. Blameless, specific, sanitized. If you would rather write it straight into a pull request, use `templates/lesson-learned.md`.
+
+  - type: input
+    id: summary
+    attributes:
+      label: One-line summary
+      placeholder: Security baseline and Settings Catalog profile fought over the same BitLocker setting; devices flapped between compliant and non-compliant.
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact
+      description: Who or what was affected, for how long, and how it was noticed. Approximate numbers are fine; no device names or UPNs.
+    validations:
+      required: true
+
+  - type: textarea
+    id: cause
+    attributes:
+      label: Root cause
+      description: What was actually wrong, as precisely as you can state it.
+    validations:
+      required: true
+
+  - type: textarea
+    id: fix
+    attributes:
+      label: Fix and prevention
+      description: What resolved it, and what change (policy, process, monitoring, script) stops it happening again.
+    validations:
+      required: true
+
+  - type: input
+    id: platforms
+    attributes:
+      label: Platforms and features involved
+      placeholder: Windows 11, Settings Catalog, Security baselines, Compliance
+
+  - type: checkboxes
+    id: sanitized
+    attributes:
+      label: Sanitization
+      options:
+        - label: Nothing above identifies a tenant, device, or person.
+          required: true
