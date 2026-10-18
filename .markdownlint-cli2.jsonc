@@ -1,0 +1,28 @@
+{
+  // markdownlint-cli2 configuration. Run locally with:
+  //   npx markdownlint-cli2 "**/*.md"
+  "config": {
+    "default": true,
+
+    // Line length: long lines are fine in prose and tables.
+    "MD013": false,
+
+    // Inline HTML is allowed (<details>, <kbd>, badges).
+    "MD033": false,
+
+    // First line does not have to be a top-level heading (docs may start with front matter).
+    "MD041": false,
+
+    // Duplicate headings are allowed when they are under different parents
+    // (every runbook has a "Rollback" section, for example).
+    "MD024": { "siblings_only": true },
+
+    // Ordered lists may use 1. 1. 1. or 1. 2. 3.
+    "MD029": { "style": "one_or_ordered" }
+  },
+  "ignores": [
+    "node_modules/**",
+    ".git/**",
+    "LICENSE"
+  ]
+}

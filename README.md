@@ -25,82 +25,113 @@ This repo is the layer between official docs and real operations:
 ## What's covered
 
 ### Enrollment & Autopilot
+
 Windows Autopilot (user-driven, self-deploying, pre-provisioning — and the Device Preparation experience that's replacing classic Autopilot), Apple Automated Device Enrollment and Configurator-based flows, Android Enterprise (fully managed, work profile, dedicated devices), macOS enrollment via Company Portal and automated enrollment, and Linux. Enrollment restrictions, device categories, device limits, assignment filters on enrollment profiles, and the Enrollment Status Page — including the timing issues that cause half the support tickets during a rollout.
 
 ### Device Configuration
+
 Settings Catalog is where you should start — it's what Microsoft is investing in going forward. But you'll also hit Administrative Templates (ADMX-backed policies delivered through Intune), device restriction templates, and custom OMA-URI for CSP settings that haven't surfaced in the catalog yet. This section covers the decision tree for when to use which profile type, how conflicts resolve when multiple profiles target the same setting, scope tags for RBAC, and assignment filters — because getting assignment right matters more than getting the setting right.
 
 ### Applications
+
 Win32 app packaging (IntuneWin), detection rules that actually work across x64 and ARM, dependency chains, supersedence, required vs. available install behavior, the Enterprise App Catalog, Microsoft 365 Apps deployment, LOB apps, and Store apps (both the new Microsoft Store integration and legacy flows). App configuration policies for managed apps and managed devices. What the IME logs (`IntuneManagementExtension.log`) are actually telling you when an install fails. The ESP app install phase and why apps sometimes look stuck at 50%.
 
 ### App Protection (MAM)
+
 App protection policies for iOS, Android, and Windows — data transfer restrictions, copy/paste controls, conditional launch settings, PIN requirements, selective wipe. Covers both MDM-enrolled and unenrolled/BYOD scenarios, because most environments run both. Includes app configuration for managed apps and how MAM-WE (without enrollment) and MAM on enrolled devices differ in practice.
 
 ### Compliance & Conditional Access
+
 Compliance policies per platform, custom compliance with PowerShell scripts, the evaluation cycle and why compliance state isn't instant, grace periods, notification actions, and non-compliance actions like retire/wipe on continued non-compliance. How compliance state feeds into Entra ID Conditional Access — patterns for gating Microsoft 365 access, VPN, and LOB apps. What "Not compliant" vs. "Not evaluated" vs. "In grace period" actually mean for your users and when each state blocks access.
 
 ### Security
+
 Endpoint security policies — antivirus (Defender AV), firewall, disk encryption (BitLocker and FileVault), attack surface reduction, endpoint detection and response — and how these relate to (and sometimes conflict with) configuration profiles targeting the same settings. Security baselines as a starting posture and why you should treat them as a starting point to customize, not a finished product. Defender for Endpoint onboarding through Intune, the Security Management for Microsoft Defender for Endpoint (MDE-attach) scenario, and the compliance → Conditional Access → Defender signal chain.
 
 ### Updates & Servicing
+
 Update rings (deferral windows, deadlines, user experience settings), feature update policies, quality update policies including expedited updates, and driver update management. How Intune's update policies map to what Windows Autopatch does under the hood. Practical strategy for deferral and deadline settings, why active hours matter more than you think, and how to push a critical patch without destroying the end-user experience. Notes on servicing mixed Windows 10/11 fleets and planning for Windows 10 EOS.
 
 ### Remediations
+
 Detection and remediation script pairs (what used to be called Proactive Remediations before the rebrand). Real-world examples: stale registry keys, broken services, certificate health checks, time sync issues, local admin group drift. Each script pair is documented with its detection logic, what the remediation changes, and what it explicitly does not touch. Covers the execution context (SYSTEM vs. user), output requirements for detection scripts, and scheduling.
 
 ### Reporting & Graph Automation
+
 Built-in Intune reports and their limitations, Graph API export patterns for compliance status, app install failures, device inventory, and anything the portal can't slice the way you need. Authentication patterns for Graph (app registrations, delegated vs. application permissions, certificate-based auth), the `Microsoft.Graph` PowerShell module and direct REST calls, and the reality that many Intune Graph endpoints still live on the beta API. Reusable functions for backup/export, configuration comparison, bulk assignment changes, and scheduled reporting.
 
 ### Remote Actions & Runbooks
+
 Wipe, retire, fresh start, Autopilot reset, remote lock, passcode reset, sync, collect diagnostics, and device rename — and the platform differences that matter. A "wipe" on iOS and a "wipe" on Windows are not the same operation with the same consequences. Runbooks for repeatable procedures: lost/stolen device response, device offboarding, BitLocker key rotation, certificate renewal, and break-glass access.
 
 ### Migrations
+
 Co-management with Configuration Manager — workload sliders, staged transitions, and running two management authorities without creating policy conflicts. Migration from third-party MDM (moving devices without wiping them where possible, and planning for when you can't). Moving from Hybrid Azure AD Join to Entra Join (cloud-native), including the Group Policy to Intune translation work and user-impact planning.
 
 ### Intune Suite & Add-ons
+
 Remote Help, Endpoint Privilege Management (just-in-time elevation without giving out local admin), Enterprise Application Management (the curated app catalog), Cloud PKI (cloud-hosted certificate lifecycle management), Advanced Analytics, and Microsoft Tunnel (including Tunnel for MAM on unenrolled devices). Each documented with prerequisites, licensing context, and practical guidance on when it's worth enabling. With many of these capabilities rolling into M365 E3/E5 licensing throughout 2026, the licensing notes are kept current.
 
 ---
 
 ## Repo structure
 
-```
+```text
 /
 ├── docs/
-│   ├── fundamentals/                  # Licensing, prereqs, tenant setup, Entra ID relationship
-│   ├── platforms/                     # Windows / macOS / iOS-iPadOS / Android / Linux
+│   ├── README.md                      # Topic index: maps every section below to folders, scripts, remediations
+│   ├── fundamentals/                  # Licensing, prereqs, tenant setup, Entra ID relationship, naming & rings
+│   ├── enrollment/                    # Autopilot & device preparation, ADE, Android Enterprise, ESP, restrictions
+│   ├── platforms/                     # Platform-specific notes
+│   │   ├── windows/
+│   │   ├── macos/
+│   │   ├── ios-ipados/
+│   │   ├── android/
+│   │   └── linux/
+│   ├── configuration/                 # Profile-type decision tree, conflicts, scope tags, assignment filters
 │   ├── security-and-compliance/       # Compliance, Conditional Access, baselines, endpoint security
 │   ├── apps/                          # Deployment, config, protection, ESP/DPP
 │   ├── updates/                       # Rings, feature/quality updates, drivers, Autopatch
 │   ├── reporting-and-analytics/       # Reports, Graph exports, operational dashboards
 │   ├── automation/                    # Graph + PowerShell, auth, reusable functions
-│   ├── troubleshooting/              # Logs, known issues, platform-specific gotchas
-│   └── migrations/                    # Co-management, third-party MDM, cloud-native transition
+│   ├── troubleshooting/               # Logs, known issues, platform-specific gotchas
+│   ├── migrations/                    # Co-management, third-party MDM, cloud-native transition
+│   ├── intune-suite/                  # EPM, Remote Help, EAM, Cloud PKI, Advanced Analytics, Tunnel, licensing
+│   └── lessons-learned/               # Blameless "what broke and why" write-ups
 │
 ├── artifacts/
 │   ├── policies/
-│   │   ├── configuration/             # Settings Catalog, ADMX, OMA-URI
+│   │   ├── configuration/             # Settings Catalog, ADMX, OMA-URI, assignment filters
 │   │   ├── compliance/                # Compliance policy JSON (per platform)
 │   │   ├── endpoint-security/         # AV, firewall, disk encryption, ASR, EDR
 │   │   ├── security-baselines/        # Baseline exports + customization notes
 │   │   ├── updates/                   # Update rings, feature/quality/driver policies
-│   │   └── apps/                      # App config templates, assignment metadata
+│   │   ├── apps/                      # App config templates, assignment metadata
+│   │   └── enrollment/                # Autopilot profiles, ESP, enrollment restrictions
 │   └── reports/                       # Export templates, sample output (sanitized)
 │
 ├── scripts/
-│   ├── powershell/                    # Modules, admin scripts, Graph tooling
+│   ├── powershell/                    # Admin scripts, Graph tooling
+│   │   └── modules/                   # Shared IntuneAtlas module (auth, paging, sanitizing, compare)
 │   └── graph/                         # REST collections, request samples
 │
 ├── remediations/
 │   ├── detection/                     # Detection scripts (read-only checks)
-│   └── remediation/                   # Fix scripts, paired with detection
+│   ├── remediation/                   # Fix scripts, paired with detection
+│   └── docs/                          # One doc per pair: checks, changes, does-not-touch, rollback
 │
 ├── runbooks/                          # Operational procedures
 ├── examples/                          # End-to-end walkthroughs
-└── .github/                           # PR templates, issue templates, CI
+├── tests/                             # Pester tests: tooling and structure checks
+├── .github/                           # PR template, issue templates, CI, sanitization guard
+├── CONTRIBUTING.md
+├── SECURITY.md
+└── LICENSE
 ```
 
 If it changes device or app behavior, it gets two things: an artifact and a doc. The artifact is the *what*. The doc is the *why*, who it targets, and how to undo it.
+
+Every folder has a `README.md` saying what belongs there. [`docs/README.md`](docs/README.md) maps each section above to the folders, scripts, and remediations that serve it. A test in `tests/` fails CI if this tree and the real folders drift apart.
 
 ---
 
@@ -128,6 +159,8 @@ A good contribution includes:
 - A markdown doc with the problem it solves, who it's for, and a rollback path.
 - A sanitized artifact (JSON, script, template) — no tenant IDs, tokens, hardware hashes, or PII. Use placeholders like `<YOUR-TENANT-ID>` and note what goes there.
 - Platform and licensing context (especially for Suite add-ons or features that require Plan 2 or E5).
+
+Conventions, naming, placeholders, and the local checks are in [CONTRIBUTING.md](CONTRIBUTING.md). CI runs PSScriptAnalyzer, Pester, JSON validation, markdownlint, and a sanitization guard that fails the build on tenant IDs, tokens, or hardware hashes.
 
 ---
 

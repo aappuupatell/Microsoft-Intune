@@ -1,0 +1,9 @@
+# Default owner for everything. Pull requests automatically request review here.
+* @aappuupatell
+
+# Anything that runs on endpoints or changes tenant state gets the same owner but
+# is listed explicitly so it is obvious that these paths are review-gated.
+/remediations/ @aappuupatell
+/scripts/ @aappuupatell
+/artifacts/ @aappuupatell
+/.github/ @aappuupatell

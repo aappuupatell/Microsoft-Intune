@@ -1,0 +1,60 @@
+name: New content proposal
+description: Propose a doc, artifact, script, remediation, or runbook before writing it, so it lands in the right place.
+title: "[Proposal]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Small fixes do not need a proposal. Open a pull request. This form is for new content where a quick conversation about scope and placement saves a rewrite.
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What are you proposing?
+      options:
+        - Documentation (docs/)
+        - Policy artifact + doc (artifacts/ + docs/)
+        - Script (scripts/)
+        - Remediation pair (remediations/)
+        - Runbook (runbooks/)
+        - End-to-end example (examples/)
+        - Lesson learned / post-mortem (docs/lessons-learned/)
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does it solve?
+      description: The symptom an admin hits, not the feature name.
+      placeholder: Devices enrolled through Autopilot pre-provisioning show "Not evaluated" compliance for hours because ...
+    validations:
+      required: true
+
+  - type: input
+    id: platforms
+    attributes:
+      label: Platforms
+      placeholder: Windows, macOS, iOS/iPadOS, Android, Linux
+    validations:
+      required: true
+
+  - type: input
+    id: licensing
+    attributes:
+      label: Licensing or feature prerequisites
+      description: Intune Plan 1 is assumed. Call out Plan 2, Intune Suite, specific add-ons, Windows E3/E5, Entra ID P1/P2, or preview features.
+      placeholder: Requires Endpoint Privilege Management (Intune Suite or M365 E5)
+
+  - type: textarea
+    id: blast
+    attributes:
+      label: What does it change on devices or in the tenant, and how is it rolled back?
+      description: Required for anything that is not documentation only.
+
+  - type: input
+    id: location
+    attributes:
+      label: Proposed location in the repo
+      placeholder: remediations/windows/local-admin-drift/
