@@ -31,7 +31,7 @@ jobs:
     name: PSScriptAnalyzer
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install PSScriptAnalyzer
         shell: pwsh
@@ -65,7 +65,7 @@ jobs:
     name: Pester tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install Pester 5
         shell: pwsh
@@ -100,7 +100,7 @@ jobs:
     name: JSON validity
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Parse every .json file
         shell: bash
@@ -122,7 +122,7 @@ jobs:
     name: markdownlint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: actions/setup-node@v4
         with:
@@ -135,7 +135,7 @@ jobs:
     name: Sanitization guard
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Scan for tenant identifiers, secrets, and encoding problems
         shell: pwsh
@@ -145,7 +145,7 @@ jobs:
     name: Secret scan (gitleaks)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
