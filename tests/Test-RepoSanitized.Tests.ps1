@@ -90,16 +90,32 @@ Contact: admin@contoso.com or user@contoso.onmicrosoft.com
     }
 
     Context 'Identifiers' {
-        It 'flags a real tenant domain and allows contoso' {
-            Write-Fixture 'docs/t.md' 'Real: northwindtraders99.onmicrosoft.com and fake: contoso.onmicrosoft.com' | Out-Null
+        It 'flags a real tenant domain (also the .mail routing form) and allows placeholders' {
+            Write-Fixture 'docs/t.md' 'Real: northwindtraders99.onmicrosoft.com and northwindtraders99.mail.onmicrosoft.com; fake: contoso.onmicrosoft.com and <label>.mail.onmicrosoft.com' | Out-Null
             $r = Invoke-Guard | Where-Object Rule -eq 'TenantDomain'
-            $r.Count | Should -Be 1
+            $r.Count | Should -Be 2
         }
 
         It 'flags a real e-mail address and allows placeholder domains' {
             Write-Fixture 'docs/e.md' 'Write to kim.lee@northwindtraders99.example-corp.io or admin@contoso.com' | Out-Null
             $r = Invoke-Guard | Where-Object Rule -eq 'EmailOrUpn'
             $r.Count | Should -Be 1
+        }
+
+        It 'flags guest, URL-encoded, non-ASCII and admin@ addresses on real domains' {
+            Write-Fixture 'docs/e2.md' ('guest kim_northwind99.com#EXT#@northwind99.onmicrosoft.com ; encoded kim.lee%40northwind99.com ; unicode kim.m' + [char]0x00FC + 'ller@northwind99.com ; admin@northwind99.com') | Out-Null
+            $r = Invoke-Guard | Where-Object Rule -eq 'EmailOrUpn'
+            $r.Count | Should -Be 4
+        }
+
+        It 'does not flag JSON keys that look like addresses (definition@odata.bind, settings@odata.context)' {
+            Write-Fixture 'artifacts/admx.json' '{ "definition@odata.bind": "https://graph.microsoft.com/beta/deviceManagement/groupPolicyDefinitions(''x'')", "settings@odata.context": "y" }' | Out-Null
+            (Invoke-Guard | Where-Object Rule -eq 'EmailOrUpn').Count | Should -Be 0
+        }
+
+        It 'flags secrets in JSON form and under Wi-Fi / VPN key names' {
+            Write-Fixture 'artifacts/secrets.json' ('{ "password": "' + ('P' * 20) + '", "preSharedKey": "' + ('K' * 20) + '", "sharedSecret": "<SECRET>" }') | Out-Null
+            (Invoke-Guard | Where-Object Rule -eq 'SecretAssignment').Count | Should -Be 2
         }
 
         It 'flags a GUID in tenantId / groupId keys' {

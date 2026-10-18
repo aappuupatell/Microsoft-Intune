@@ -107,11 +107,7 @@ $placeholderDomains = @(
 )
 $placeholderTenantLabels = @(
     'contoso', 'fabrikam', 'tenant', 'tenantname', 'yourtenant', 'your-tenant', 'mytenant',
-    'example', 'yourorg', 'org', 'company', 'yourcompany', 'tenantid', 'tenant-name'
-)
-$placeholderLocalParts = @(
-    'user', 'username', 'admin', 'someone', 'name', 'upn', 'firstname.lastname',
-    'first.last', 'john.doe', 'jane.doe', 'jdoe', 'you', 'me', 'noreply', 'no-reply'
+    'example', 'yourorg', 'org', 'company', 'yourcompany', 'tenantid', 'tenant-name', 'label'
 )
 
 #endregion Configuration
@@ -223,7 +219,8 @@ $rules = @(
     },
     @{
         Name     = 'SecretAssignment'
-        Pattern  = '(?i)\b(?<key>client[_-]?secret|app[_-]?secret|api[_-]?key|access[_-]?token|refresh[_-]?token|sas[_-]?token|account[_-]?key|connection[_-]?string|password|passwd|pwd)\b\s*[:=]\s*["'']?(?<v>[^\s"''`,;]{12,})'
+        # Matches  key = value,  key: value  and the JSON form  "key": "value".
+        Pattern  = '(?i)\b(?<key>client[_-]?secret|app[_-]?secret|api[_-]?key|access[_-]?token|refresh[_-]?token|sas[_-]?token|account[_-]?key|connection[_-]?string|password|passwd|pwd|pre[_-]?shared[_-]?key|shared[_-]?secret|proxy[_-]?password|passphrase|psk)\b["'']?\s*[:=]\s*["'']?(?<v>[^\s"''`,;]{12,})'
         Scope    = $null
         Message  = 'Secret assigned as a literal value. Use a placeholder and document the app registration / Key Vault pattern instead.'
         Validate = { param($m) -not (Test-IsPlaceholderValue $m.Groups['v'].Value) }
@@ -243,26 +240,30 @@ $rules = @(
     },
     @{
         Name     = 'TenantDomain'
-        Pattern  = '(?i)\b(?<label>[a-z0-9-]+)\.onmicrosoft\.com\b'
+        # The optional .mail segment is consumed so that the real label is what gets checked, and a
+        # match may not start right after '.' or '>' (so <TENANT>.mail.onmicrosoft.com is not flagged).
+        Pattern  = '(?i)(?<![\p{L}\p{N}.>-])(?<label>[a-z0-9-]+)(?:\.mail)?\.onmicrosoft\.com\b'
         Scope    = $null
         Message  = 'Real tenant domain. Use contoso.onmicrosoft.com or <TENANT>.onmicrosoft.com.'
         Validate = { param($m) -not ($placeholderTenantLabels -contains $m.Groups['label'].Value.ToLowerInvariant()) }
     },
     @{
         Name     = 'EmailOrUpn'
-        Pattern  = '\b(?<local>[A-Za-z0-9._%+-]+)@(?<domain>[A-Za-z0-9.-]+\.[A-Za-z]{2,})\b'
+        # Also matches guest UPNs (name_domain.com#EXT#@tenant), %40-encoded and non-ASCII local parts.
+        Pattern  = '(?<local>[\p{L}\p{N}._%+''#-]+)(?:@|%40)(?<domain>[A-Za-z0-9.-]+\.[A-Za-z]{2,})(?![\p{L}\p{N}-])'
         Scope    = $null
         Message  = 'E-mail address / UPN that is not a documented placeholder domain. Use user@contoso.com.'
         Validate = {
             param($m)
+            # JSON keys such as definition@odata.bind are not addresses.
+            if ($m.Groups['domain'].Value -like 'odata.*') { return $false }
             if (Test-IsPlaceholderDomain $m.Groups['domain'].Value) { return $false }
-            if ($placeholderLocalParts -contains $m.Groups['local'].Value.ToLowerInvariant()) { return $false }
             return $true
         }
     },
     @{
         Name     = 'TenantObjectIdInJson'
-        Pattern  = '"(?<key>tenantId|tenantid|groupId|targetGroupId|azureADDeviceId|azureAdDeviceId|aadDeviceId|deviceId|managedDeviceId|intuneDeviceId|entraDeviceId|userId|enrolledByUserId|roleScopeTagId|filterId|deviceAndAppManagementAssignmentFilterId)"\s*:\s*"(?<v>[^"]*)"'
+        Pattern  = '"(?<key>tenantId|tenantid|groupId|targetGroupId|azureADDeviceId|azureAdDeviceId|azureActiveDirectoryDeviceId|aadDeviceId|deviceId|managedDeviceId|intuneDeviceId|entraDeviceId|userId|enrolledByUserId|ownerId|principalId|createdByUserId|sourceId|roleScopeTagId|filterId|assignmentFilterId|deviceAndAppManagementAssignmentFilterId|notificationTemplateId|secretReferenceValueId)"\s*:\s*"(?<v>[^"]*)"'
         Scope    = $null
         Message  = 'Tenant-specific object ID in a known key. Replace with a placeholder such as <GROUP-OBJECT-ID> and note what goes there in the doc.'
         Validate = {

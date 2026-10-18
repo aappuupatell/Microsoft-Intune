@@ -58,7 +58,12 @@ Exports from the admin center and Graph contain tenant IDs, group object IDs, ti
 | `<CLIENT-ID>`                  | App registration (client) ID                                      |
 | `<CERT-THUMBPRINT>`            | Certificate thumbprint for app-only auth                          |
 | `<UPN>` or `user@contoso.com`  | A user principal name                                             |
+| `<USER-DISPLAY-NAME>`          | A person's display name                                           |
 | `<DEVICE-NAME>`, `<SERIAL>`    | Device identifiers                                                |
+| `<HARDWARE-HASH>`, `<MAC-ADDRESS>`, `<IMEI>` | Device identifiers that are secrets                  |
+| `<SECRET>`                     | Any password, pre-shared key, token, or secret setting value      |
+| `<HOSTNAME>`, `<SERVER>`, `<IP-ADDRESS>` | Internal hostnames, UNC hosts, private IP addresses      |
+| `<BASE64-BLOB-REMOVED:n-CHARS>` | A certificate, payload, or other binary blob that was removed    |
 
 Never commit, even in history: tokens, client secrets, private keys, Autopilot hardware hashes, serial numbers, IMEIs, MAC addresses, real UPNs, internal hostnames, or employee IDs. If you realize you pushed one, rotate it first, then tell the maintainer.
 
